@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	<servlet>
+		<servlet-name>ContactsAdd</servlet-name>
+		<servlet-class>com.contact.ContactsAdd</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContactsAdd</servlet-name>
+		<url-pattern>/contacts</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ContactsDelete</servlet-name>
+		<servlet-class>com.contact.ContactDelete</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContactsDelete</servlet-name>
+		<url-pattern>/deletecon</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ContactSearch</servlet-name>
+		<servlet-class>com.contact.ContactSearch</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContactSearch</servlet-name>
+		<url-pattern>/searchcon</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ContactsEdit</servlet-name>
+		<servlet-class>com.contact.ContactEdit</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContactsEdit</servlet-name>
+		<url-pattern>/editcon</url-pattern>
+	</servlet-mapping>
+	
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>
