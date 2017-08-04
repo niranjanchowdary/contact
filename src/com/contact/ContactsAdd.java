@@ -2,21 +2,26 @@ package com.contact;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 @SuppressWarnings("serial")
 public class ContactsAdd extends HttpServlet {
+	 private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		PrintWriter out = resp.getWriter();
 		// input from user to add contact
+		
+		Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
+        List<BlobKey> blobKeys = blobs.get("myFile");
 		String fname = req.getParameter("fname");
 		String lname = req.getParameter("lname");
 		String[] phone_no = req.getParameterValues("mytext");
@@ -46,7 +51,7 @@ public class ContactsAdd extends HttpServlet {
 			} catch (Exception e) {
 				email[0] = "";
 			}
-			if (ContactsStore.addContact(fname, lname, phone_no, email, dr_no, state, country)) {
+			if (ContactsStore.addContact(fname, lname, phone_no, email, dr_no, state, country,blobKeys)) {
 				System.out.println("successfully done");
 				out.print("contact added successfully");
 			} else {

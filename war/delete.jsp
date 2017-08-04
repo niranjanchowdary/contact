@@ -14,6 +14,7 @@
 		NAME: <input type="text" name="name" style="margin-left: 10px;"><br>
 		<br>ATTRIBUTE:<select name="option">
 		<option>fname</option>
+		<option>contact</option>
 		<option>lname</option>
 		<option>mobile</option>
 		<option>email</option>

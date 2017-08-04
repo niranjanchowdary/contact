@@ -1,5 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+	
+	<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+
+<%
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+%>
+	
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -29,7 +37,7 @@
    }
 
 </SCRIPT>
-<form action="/contacts" method="post">
+<form action="<%= blobstoreService.createUploadUrl("/contacts") %>" method="post" enctype="multipart/form-data">
 <div id="fname">
 FNAME<input type="text" name="fname"/>
 </div>
@@ -56,6 +64,10 @@ EMAIL <input type="button" id="addrows" name="email" class="addperson"
 <div id="countryName">
   COUNTRY<input type="text" name="country"/>
 </div>
-<input type="submit" value="add"">
+
+<div id="img">
+  IMAGE<input type="file" name="myFile"/>
+</div>
+<input type="submit" value="add">
 </form></body>
 </html>
