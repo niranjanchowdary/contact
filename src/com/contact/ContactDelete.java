@@ -16,12 +16,14 @@ public class ContactDelete extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// input from user to delete contact
 		PrintWriter out = response.getWriter();
-		String name = request.getParameter("name");
-		String option = request.getParameter("option");
-		if (name != null && name != "") {
-			String message="";
-			message = ContactsStore.deleteContact(name, option);
-				out.println("message from server "+ message);
+		//input from user side
+		String contact_value = request.getParameter("name");
+		String contact_field = request.getParameter("option");
+		//checking the contact value
+		if (contact_value != null && contact_value != "") {
+			String message_2_client="";
+			message_2_client = ContactsStore.deleteContact(contact_value, contact_field);
+				out.println("message from server "+ message_2_client);
 			
 		}
 		// invalid input

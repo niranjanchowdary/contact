@@ -19,15 +19,15 @@ public class ContactSearch extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		PrintWriter out = resp.getWriter();
 		// input from user to search contact
-		String attributename = req.getParameter("option");
-		String value = req.getParameter("value");
-		if (value != null && value != "") {
-		List<Entity> list_entity_obj =   ContactsStore.searchContact(attributename, value);
+		String contact_field = req.getParameter("option");
+		String contact_details = req.getParameter("value");
+		if (contact_details != null && contact_details != "") {
+		List<Entity> list_entity_obj =   ContactsStore.searchContact(contact_field, contact_details);
 			if (list_entity_obj == null) {
 				resp.sendError(420, "sorry contact is there");
 			} else {
 				//redirecting to result page 
-				req.setAttribute("e", list_entity_obj);
+				req.setAttribute("list_entity_obj", list_entity_obj);
 				req.getRequestDispatcher("/searchResult.jsp").include(req, resp);
 				
 				

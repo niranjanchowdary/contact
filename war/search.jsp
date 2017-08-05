@@ -10,7 +10,7 @@
 
 <center><h1>Search contact</h1></center>
 	<form action="/searchcon" method="post">
-		ATTRIBUTE: <select name="option">
+		CONTACT_FIELD: <select name="option">
 		<option>fname</option>
 		<option>lname</option>
 		<option>mobile</option>
@@ -19,7 +19,7 @@
 		<option>country</option>
 		<option>drno</option>
 		</select><br>
-		NAME: <input type="text" name="value" style="margin-left: 10px;"><br>
+		CONTACT_DETAILS: <input type="text" name="value" style="margin-left: 10px;"><br>
 		<br> <input type="submit" value="search"
 			style="margin-left: 70px;">
 	</form>

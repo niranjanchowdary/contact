@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+<!-- target place to display the out put when button click happen -->
 	<div style="margin-top: 200px; margin-left: 55px;">
 		<div>
 			<a target="main" href="add.jsp" style="padding: 15px 5px 5px 5px"><button

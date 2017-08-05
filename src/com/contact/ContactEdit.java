@@ -14,11 +14,12 @@ public class ContactEdit extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// input from user to edit
 		PrintWriter out = response.getWriter();
-		String name = request.getParameter("name");
-		String option = request.getParameter("option");
-		String newvalue = request.getParameter("newvalue");
-		if (name != null && name != "" && newvalue != null) {
-			if (ContactsStore.editContact(name,option,newvalue)) {
+		String contact_details = request.getParameter("name");
+		String contact_field = request.getParameter("option");
+		String new_value = request.getParameter("newvalue");
+		if (contact_details != null && contact_details != "" && new_value != null) {
+			//passing data to retrieve and checking retrieved data  
+			if (ContactsStore.editContact(contact_details,contact_field,new_value)) {
 				System.out.println("edited");
 				out.print("contact edited successfully");
 			} else {

@@ -12,19 +12,22 @@
 <body>
 <table border="1"style=" width="400px";>
 <tr>
- <%
- List<Entity> list_obj=(List<Entity>)request.getAttribute("e");
- for(Entity entity_obj:list_obj){
-	 System.out.print(entity_obj.getProperty("image"));
+ 
+ <%//rendering data to client 
+ List<Entity> list_object=(List<Entity>)request.getAttribute("list_entity_obj");
+ for(Entity entity_object:list_object){
+	 System.out.print(entity_object.getProperty("image"));
 	 out.print("<td colspan='3'>next table</td></tr><tr>");
-	 Map<String,Object> map_obj=entity_obj.getProperties();
- for(Map.Entry<String,Object> map:map_obj.entrySet())
+	 Map<String,Object> map_object=entity_object.getProperties();
+	//properties
+	 for(Map.Entry<String,Object> map:map_object.entrySet())
  {
 	 out.print("<td>"+map.getKey()+"</td>");
 	 
   }
  out.print("</tr><tr>");
- for(Map.Entry<String,Object> map:map_obj.entrySet())
+ //values 
+ for(Map.Entry<String,Object> map:map_object.entrySet())
  {
 	 out.print("<td>"+map.getValue()+"</td>");
 	 

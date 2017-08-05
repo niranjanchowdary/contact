@@ -11,8 +11,8 @@
 		<h1>Delete contact</h1>
 	</center>
 	<form action="/deletecon" method="post">
-		NAME: <input type="text" name="name" style="margin-left: 10px;"><br>
-		<br>ATTRIBUTE:<select name="option">
+		CONTACT_DETAILS: <input type="text" name="name" style="margin-left: 10px;"><br>
+		<br>CONTACT_FIELD:<select name="option">
 		<option>fname</option>
 		<option>contact</option>
 		<option>lname</option>

@@ -12,8 +12,8 @@
 	</center>
 	<%  %>
 	<form action="/editcon" method="post">
-		NAME: <input type="text" name="name" style="margin-left: 59px;"><br>
-		<br>ATTRIBUTE:<select name="option">
+		CONTACT_DETAILS: <input type="text" name="name" style="margin-left: 59px;"><br>
+		<br>CONTACT_FIELD:<select name="option">
 		<option>fname</option>
 		<option>lname</option>
 		<option>mobile</option>

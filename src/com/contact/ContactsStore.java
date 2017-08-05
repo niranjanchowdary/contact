@@ -1,10 +1,7 @@
 package com.contact;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.ParseConversionEvent;
 
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -14,55 +11,54 @@ import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
 
 public class ContactsStore {
-	static DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
+	// data store creation
+	static DatastoreService contact_datastore = DatastoreServiceFactory.getDatastoreService();
+	// entity
 	static Entity contact;
 
 	// adding contact to contacts
 	// based on mobile number mobile0 number must be unique
-	public static boolean addContact(String fname, String lname, String pho[], String email[], String dr_no,
-			String state, String country,List<BlobKey> blob) {
+	public static boolean addContact(String first_name, String last_name, String phone_no[], String email_id[],
+			String door_no, String state, String country, List<BlobKey> blob_contact_image) {
 		Entity phoneNumber = null;
 		// checking entity whether it is there or not
-		boolean check = getId1(pho, email);
+		boolean check = getId1(phone_no, email_id);
 		// if check false then try to add an entity
 		if (check != true) {
 			try {
-
-				Entity contact = new Entity("mobile0", pho[0]);
-				// phoneNumber= new Entity("mobile", contact.getKey());
-				// emails= new Entity("emailId", contact.getKey());
-				contact.setProperty("fname", fname);
-				contact.setProperty("lname", lname);
-				for (int i = 0; i < pho.length; i++) {
+				// local entity with mobile0 kind
+				Entity contact = new Entity("mobile0", phone_no[0]);
+				contact.setProperty("fname", first_name);
+				contact.setProperty("lname", last_name);
+				//storing phone numbers into mobile store and mobile0 
+				for (int i = 0; i < phone_no.length; i++) {
 					phoneNumber = new Entity("mobileStore", contact.getKey());
 					phoneNumber.setProperty("mobilekey", contact.getKey());
-					phoneNumber.setProperty("mobile", pho[i]);
-					contact.setProperty("mobile" + i, pho[i]);
-					datastore.put(phoneNumber);
+					phoneNumber.setProperty("mobile", phone_no[i]);
+					contact.setProperty("mobile" + i, phone_no[i]);
+					contact_datastore.put(phoneNumber);
 
 				}
-				for (int i = 0; i < email.length; i++) {
-					// emails = new Entity("emailId", contact.getKey());
+				//storing email ids into mobile store and mobile0 
+				for (int i = 0; i < email_id.length; i++) {
 					phoneNumber.setProperty("emailkey", contact.getKey());
-					phoneNumber.setProperty("email", email[i]);
-					contact.setProperty("email" + i, email[i]);
-					datastore.put(phoneNumber);
+					phoneNumber.setProperty("email", email_id[i]);
+					contact.setProperty("email" + i, email_id[i]);
+					contact_datastore.put(phoneNumber);
 				}
-				contact.setProperty("drno", dr_no);
+				contact.setProperty("drno", door_no);
 				contact.setProperty("state", state);
 				contact.setProperty("country", country);
-				contact.setProperty("image", blob);
+				contact.setProperty("image", blob_contact_image);
 
 				// persisting data
-				datastore.put(contact);
+				contact_datastore.put(contact);
 				return true;
 			} catch (NullPointerException e) {
 				return false;
@@ -75,72 +71,73 @@ public class ContactsStore {
 
 	// checking mobile number is there or not if it is there means then return
 	// true else false
-	public static boolean getId1(String[] pho, String[] email) {
+	public static boolean getId1(String[] phone_number, String[] email_id) {
+		//list of Entities as a generic type 
 		List<Entity> phoneresults = null;
 		List<Entity> emailresults = null;
-		int count = 0, count1 = 0;
+		
+		int counter_var_1 = 0, counter_var_2 = 0;
 
-		for (int j = 0; j < pho.length; j++) {
+		//searching whether the phone no is there or not 
+		for (int j = 0; j < phone_number.length; j++) {
 			// Key key = KeyFactory.createKey("mobile0", pho[0]);
-			Filter phoneFilter = new FilterPredicate("mobile", FilterOperator.EQUAL, pho[j]);
+			Filter phoneFilter = new FilterPredicate("mobile", FilterOperator.EQUAL, phone_number[j]);
 
 			Query phonequery = new Query("mobileStore").setFilter(phoneFilter);
 
 			System.out.println(phonequery);
-			phoneresults = datastore.prepare(phonequery).asList(FetchOptions.Builder.withDefaults());
+			phoneresults = contact_datastore.prepare(phonequery).asList(FetchOptions.Builder.withDefaults());
 
 			System.out.println(phoneresults);
 			if (!phoneresults.isEmpty()) {
-				count++;
+				counter_var_1++;
 				System.out.println("we r here");
 			}
 
 		}
-		for (int j = 0; j < email.length; j++) {
-			// Key key = KeyFactory.createKey("mobile0", pho[0]);
-			Filter emailFilter = new FilterPredicate("email", FilterOperator.EQUAL, email[j]);
+		
+		//searching email whether it is there or not 
+		for (int j = 0; j < email_id.length; j++) {
+			Filter emailFilter = new FilterPredicate("email", FilterOperator.EQUAL, email_id[j]);
 			Query emailquery = new Query("mobileStore").setFilter(emailFilter);
-			emailresults = datastore.prepare(emailquery).asList(FetchOptions.Builder.withDefaults());
+			emailresults = contact_datastore.prepare(emailquery).asList(FetchOptions.Builder.withDefaults());
 			if (!emailresults.isEmpty()) {
-				count1++;
+				counter_var_2++;
 				System.out.println("we r here");
 			}
 		}
 
-		if (count != 0 || count1 != 0) {
+		if (counter_var_1 != 0 || counter_var_2 != 0) {
 			System.out.println("here");
 			return true;
 		}
 		return false;
-
 	}
 
 	// searching entity with mobile number and email and other options
-	public static List<Entity> searchContact(String attribute, String name) {
-		List<Entity> results = null;
-		List<Entity> en1 = null;
-		if (attribute.equals("mobile") || attribute.equals("email")) {
+	public static List<Entity> searchContact(String contact_field, String contact_details) {
+		List<Entity> search_results = null;
+		List<Entity> result_entity = null;
+		//checking whether the contact field is a mobile,email or any other 
+		if (contact_field.equals("mobile") || contact_field.equals("email")) {
 			System.out.println("we r here");
 			try {
-
-				Query query = new Query("mobileStore")
-						.setFilter(new FilterPredicate(attribute, FilterOperator.EQUAL, name));
-				results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-				System.out.println(results);
-				if (!results.isEmpty()) {
+				//query to retrieve the details of a particular person based on mobile or email
+				Query filter_query = new Query("mobileStore").setFilter(new FilterPredicate(contact_field, FilterOperator.EQUAL, contact_details));
+				search_results = contact_datastore.prepare(filter_query).asList(FetchOptions.Builder.withDefaults());
+				System.out.println(search_results);
+				//checking result is empty or not 
+				//if not empty then return result to client 
+				if (!search_results.isEmpty()) {
 					System.out.println("returned");
-					Key key;
-					for (Entity en : results) {
-						key = (Key) en.getProperty("mobilekey");
-						System.out.println(key);
-						en1 = datastore
-								.prepare(new Query("mobile0").setAncestor(key)
-										.setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY,
-												FilterOperator.EQUAL, key)))
-								.asList(FetchOptions.Builder.withDefaults());
-						System.out.println(en1);
+					Key parent_key;
+					for (Entity en : search_results) {
+						parent_key = (Key) en.getProperty("mobilekey");
+						System.out.println(parent_key);
+						result_entity = contact_datastore.prepare(new Query("mobile0").setAncestor(parent_key).setFilter(new FilterPredicate(Entity.KEY_RESERVED_PROPERTY,FilterOperator.EQUAL, parent_key))).asList(FetchOptions.Builder.withDefaults());
+						System.out.println(result_entity);
 					}
-					return en1;
+					return result_entity;
 				} else {
 					return null;
 				}
@@ -149,11 +146,12 @@ public class ContactsStore {
 				return null;
 			}
 		} else {
-			Filter keyFilter = new FilterPredicate("" + attribute + "", FilterOperator.EQUAL, name);
-			Query query = new Query("mobile0").setFilter(keyFilter);
-			results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-			if (results != null && !(results.isEmpty())) {
-				return results;
+			//fetching details of a contact user with given fields except mobile and email
+			Filter key_Filter = new FilterPredicate(contact_field, FilterOperator.EQUAL, contact_details);
+			Query query = new Query("mobile0").setFilter(key_Filter);
+			search_results = contact_datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+			if (search_results != null && !(search_results.isEmpty())) {
+				return search_results;
 			} else {
 				System.out.println("not done");
 				return null;
@@ -162,135 +160,133 @@ public class ContactsStore {
 	}
 
 	// edit contact with the help of mobile number, email and other options
-	public static boolean editContact(String name, String option, String value) {
+	public static boolean editContact(String contact_details, String contact_field, String new_value) {
 		// TODO Auto-generated method stub
-		Transaction txn = datastore.beginTransaction();
-		List<Entity> results;
-		if (option.equals("mobile") || option.equals("email")) {
-			// for (int i = 1;; i++) {
-			Query query = new Query("mobileStore").setFilter(new FilterPredicate(option, FilterOperator.EQUAL, name));
-			results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-			if (!results.isEmpty()) {
+		//Beginning transaction on data store
+		Transaction transaction = contact_datastore.beginTransaction();
+		List<Entity> list_entities_result;
+		//checking whether the contact filed is a mobile number ,email or any other 
+		if (contact_field.equals("mobile") || contact_field.equals("email")) {
+			// query to retrieve the details to edit the contact  
+			Query filter_query = new Query("mobileStore").setFilter(new FilterPredicate(contact_field, FilterOperator.EQUAL, contact_details));
+			list_entities_result = contact_datastore.prepare(filter_query).asList(FetchOptions.Builder.withDefaults());
+			if (!list_entities_result.isEmpty()) {
 				try {
-					Key key;
-					for (Entity entity : results) {
-						key = (Key) entity.getProperty("mobilekey");
-						Entity parent = null;
+					Key parent_key;
+					for (Entity entity : list_entities_result) {
+						parent_key = (Key) entity.getProperty("mobilekey");
+						Entity parent_entity = null;
 						try {
-							parent = datastore.get(key);
+							parent_entity = contact_datastore.get(parent_key);
 						} catch (EntityNotFoundException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							return  false;
 						}
-						parent.setProperty(option, value);
-						entity.setProperty(option, value);
-						datastore.put(txn, entity);
-						datastore.put(txn, parent);
-						txn.commit();
+						parent_entity.setProperty(contact_field, new_value);
+						entity.setProperty(contact_field, new_value);
+						contact_datastore.put(transaction, entity);
+						contact_datastore.put(transaction, parent_entity);
+						transaction.commit();
 						return true;
 					}
 				} finally {
-					if (txn.isActive()) {
-						txn.rollback();
+					if (transaction.isActive()) {
+						transaction.rollback();
 						return false;
 					}
 				}
 			}
 		}
-
-		else { int count = 0;
+		//if contact field is not a mobile or email 
+		else {
+			int counter_var = 0;
 			try {
-				List<Entity> result;
-				Filter keyFilter = new FilterPredicate(option, FilterOperator.EQUAL, name);
-				Query query = new Query("mobile0").setFilter(keyFilter);
-				result = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-				if (!result.isEmpty())
-					for (Entity entity : result) {
-						 txn = datastore.beginTransaction();
-						entity.setProperty(option, value);
-						datastore.put(txn, entity);
-						txn.commit();
-					count++;
+				List<Entity> edit_entity_result;
+				//filter and query based on the user option
+				Filter key_Filter = new FilterPredicate(contact_field, FilterOperator.EQUAL, contact_details);
+				Query filter_query = new Query("mobile0").setFilter(key_Filter);
+				edit_entity_result = contact_datastore.prepare(filter_query).asList(FetchOptions.Builder.withDefaults());
+				if (!edit_entity_result.isEmpty())
+					for (Entity entity : edit_entity_result) {
+						transaction = contact_datastore.beginTransaction();
+						entity.setProperty(contact_field, new_value);
+						contact_datastore.put(transaction, entity);
+						transaction.commit();
+						counter_var++;
 					}
 			} finally {
-				if (txn.isActive()) {
-					txn.rollback();
+				if (transaction.isActive()) {
+					transaction.rollback();
 					return false;
 				}
 			}
-			if(count!=0)
-			return true;
+			if (counter_var != 0)
+				return true;
 		}
 		return false;
 	}
 
 	// deleting contact based on given input
 	@SuppressWarnings("unused")
-	public static String deleteContact(String name, String attribute) {
+	public static String deleteContact(String contact_details, String contact_field) {
 		// TODO Auto-generated method stub
-		List<Entity> result = null;
-		if (attribute.equals("mobile") || attribute.equals("email")) {
+		List<Entity> delete_entity_result = null;
+		//checking contact filed is a mobile ,email or any other 
+		if (contact_field.equals("mobile") || contact_field.equals("email")) {
 			System.out.println("first");
-			Query query = new Query("mobileStore")
-					.setFilter(new FilterPredicate(attribute, FilterOperator.EQUAL, name));
-			result = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-			if (!result.isEmpty()) {
-				Key key;
-				//Entity contact = null;
-				System.out.println(result);
-				for (Entity entity : result) {
-					key = (Key) entity.getProperty("mobilekey");
-					entity.removeProperty(attribute);
-					System.out.println(key);
+			Query filter_query = new Query("mobileStore").setFilter(new FilterPredicate(contact_field, FilterOperator.EQUAL, contact_details));
+			delete_entity_result = contact_datastore.prepare(filter_query).asList(FetchOptions.Builder.withDefaults());
+			if (!delete_entity_result.isEmpty()) {
+				Key parent_key;
+				System.out.println(delete_entity_result);
+				for (Entity entity : delete_entity_result) {
+					parent_key = (Key) entity.getProperty("mobilekey");
+					entity.removeProperty(contact_field);
+					System.out.println(parent_key);
 					try {
-						contact = datastore.get(key);
+						contact = contact_datastore.get(parent_key);
 						System.out.println(contact);
 					} catch (EntityNotFoundException e) {
 						// TODO Auto-generated catch block
 						return "contact not found with that given data";
 					}
-			 Collection<Object> map_obj = contact.getProperties().values();
-			 for(Object vl:map_obj){
-				 int i=0;
-				 if(vl.toString().equals(name))
-				 {
-					 contact.removeProperty(attribute+i);
-					 
-				 }
-				 i++;
-			 }
-					
+					//map object to iterate the entity properties 
+					Map<String, Object> map_obj = contact.getProperties();
+					for (Map.Entry<String, Object> obj : map_obj.entrySet()) {
+						if (obj.getValue().toString().equals(contact_details)) {
+							contact.removeProperty(obj.getKey());
+						}
+					}
+					contact_datastore.put(contact);
+					contact_datastore.put(entity);
 
-					datastore.put(contact);
-					datastore.put(entity);
-					
 					return " contact details are deleted";
+
 				}
 			} else {
 				return "contact is not there";
 			}
-		}
-		else if(attribute.equals("contact")){
+		} else if (contact_field.equals("contact")) {
+			//if given option is contact then delete based on mobile number and email
 			System.out.println("contact me");
-			Query query = new Query("mobileStore")
-					.setFilter(new FilterPredicate("mobile", FilterOperator.EQUAL, name));
-			System.out.println(query);
-			result = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-			System.out.println(result);
-			if(!result.isEmpty()){
-				Key key=null;
-				Entity parent=null;
-				for(Entity entity :result){
-					key=(Key) entity.getProperty("mobilekey");
+			Query filter_query = new Query("mobileStore").setFilter(new FilterPredicate("mobile", FilterOperator.EQUAL, contact_details));
+			System.out.println(filter_query);
+			delete_entity_result = contact_datastore.prepare(filter_query).asList(FetchOptions.Builder.withDefaults());
+			System.out.println(delete_entity_result);
+			if (!delete_entity_result.isEmpty()) {
+				Key parent_key = null;
+				Entity parent_entity = null;
+				for (Entity entity : delete_entity_result) {
+					parent_key = (Key) entity.getProperty("mobilekey");
 					System.out.println("got key");
-					datastore.delete(entity.getKey());
-					if(key==null){
+					contact_datastore.delete(entity.getKey());
+					if (parent_key == null) {
 						System.out.println("key is empty");
-						key=(Key)entity.getProperty("emailkeys");
+						parent_key = (Key) entity.getProperty("emailkeys");
 					}
 					try {
-						parent = datastore.get(key);
-						datastore.delete(parent.getKey());
+						parent_entity = contact_datastore.get(parent_key);
+						contact_datastore.delete(parent_entity.getKey());
 						return "contact is deleted successfully";
 					} catch (EntityNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -298,22 +294,21 @@ public class ContactsStore {
 					}
 				}
 			}
-		}
-		else{
+		} else {
+			//else then delete the contact details based on given option
 			System.out.println("helo");
-			Query query = new Query("mobile0")
-					.setFilter(new FilterPredicate(attribute, FilterOperator.EQUAL, name));
-			result = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-			System.out.println(result);
-			if (!result.isEmpty()) {
+			Query filter_query = new Query("mobile0").setFilter(new FilterPredicate(contact_field, FilterOperator.EQUAL, contact_details));
+			delete_entity_result = contact_datastore.prepare(filter_query).asList(FetchOptions.Builder.withDefaults());
+			System.out.println(delete_entity_result);
+			if (!delete_entity_result.isEmpty()) {
 				System.out.println("deleting");
-				for(Entity ent: result){
-					ent.removeProperty(attribute);
-					datastore.put(ent);
+				for (Entity entity : delete_entity_result) {
+					entity.removeProperty(contact_field);
+					contact_datastore.put(entity);
 					return "details are deleted";
 				}
 			}
-			
+
 		}
 		return "contact is not deleted";
 	}
