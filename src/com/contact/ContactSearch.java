@@ -24,9 +24,10 @@ public class ContactSearch extends HttpServlet {
 		if (contact_details != null && contact_details != "") {
 		List<Entity> list_entity_obj =   ContactsStore.searchContact(contact_field, contact_details);
 			if (list_entity_obj == null) {
-				resp.sendError(420, "sorry contact is there");
+				resp.sendError(420, "sorry contact is not there");
 			} else {
 				//redirecting to result page 
+				System.out.println("we r here");
 				req.setAttribute("list_entity_obj", list_entity_obj);
 				req.getRequestDispatcher("/searchResult.jsp").include(req, resp);
 				

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -15,10 +17,13 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Transaction;
+import com.google.apphosting.utils.config.AppYaml.StaticFile;
 
 public class ContactsStore {
 	// data store creation
 	static DatastoreService contact_datastore = DatastoreServiceFactory.getDatastoreService();
+	static BlobstoreService blobservice= BlobstoreServiceFactory.getBlobstoreService(); 
+	
 	// entity
 	static Entity contact;
 
@@ -151,6 +156,7 @@ public class ContactsStore {
 			Query query = new Query("mobile0").setFilter(key_Filter);
 			search_results = contact_datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
 			if (search_results != null && !(search_results.isEmpty())) {
+				System.out.println("value given");
 				return search_results;
 			} else {
 				System.out.println("not done");

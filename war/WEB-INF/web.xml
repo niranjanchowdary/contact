@@ -31,6 +31,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<url-pattern>/searchcon</url-pattern>
 	</servlet-mapping>
 	
+	
+	
+	
 	<servlet>
 		<servlet-name>ContactsEdit</servlet-name>
 		<servlet-class>com.contact.ContactEdit</servlet-class>

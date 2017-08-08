@@ -22,6 +22,7 @@ public class ContactsAdd extends HttpServlet {
 		
 		Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
         List<BlobKey> blobKeys = blobs.get("myFile");
+        System.out.println(blobKeys);
 		String first_name = req.getParameter("fname");
 		String last_name = req.getParameter("lname");
 		String[] phone_number = req.getParameterValues("mytext");
